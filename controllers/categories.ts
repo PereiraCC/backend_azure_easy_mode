@@ -1,19 +1,27 @@
 import { Request, Response } from 'express';
 
 import db from '../db/config';
+import Category  from '../models/category';
 
 // Reference to collection of users in firebase
 const categoriesRef = db.collection('categories');
 
-export const postCategories = (req : Request, res: Response) => {
+export const postCategories = async (req : Request, res: Response) => {
 
     const {id , name  } : {id : string, name : string } = req.body;
 
     try {
+
+        const category : Category = new Category(id, name);
+
+        const data = category.fromJson();
+
+        const doc = await categoriesRef.add( data );
         
         res.status(200).json({
-            msg: 'Create a category',
-            id, name
+            ok: true,
+            uid: doc.id,
+            data
         });
 
     } catch (err) {

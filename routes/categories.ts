@@ -1,13 +1,16 @@
 import { Router } from 'express';
 import { check } from 'express-validator';
 import { postCategories, getAllCategories, getCategoryById } from '../controllers/categories';
+import { fieldsValidation } from '../middlewares/inputs-validation';
 
 // Instance of router
 const router = Router();
 
 // Create a new Category
 router.post('/', [
-    // check('identification','The identification field is required.').not().isEmpty(),
+    check('id','The id field is required.').not().isEmpty(),
+    check('name','The name field is required.').not().isEmpty(),
+    fieldsValidation
 ], postCategories);
 
 // Get all Categories
