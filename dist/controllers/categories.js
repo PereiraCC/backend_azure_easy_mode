@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getCategoryById = exports.getAllCategories = exports.postCategories = void 0;
 const config_1 = __importDefault(require("../db/config"));
+const returnDocsFirebase_1 = require("../helpers/returnDocsFirebase");
 const category_1 = __importDefault(require("../models/category"));
 // Reference to collection of users in firebase
 const categoriesRef = config_1.default.collection('categories');
@@ -37,10 +38,32 @@ const postCategories = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.postCategories = postCategories;
-const getAllCategories = (req, res) => {
+const getAllCategories = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { limit = 10, from = 1 } = req.query;
     try {
-        res.status(200).json({
-            msg: 'Get all categories'
+        // Get all data to the limit
+        const data = yield categoriesRef
+            .orderBy("id")
+            .limit(limit).get();
+        // Verification if docs
+        if (from > data.docs.length || data.docs.length == 0) {
+            return res.status(200).json({
+                ok: true,
+                total: 0,
+                documents: []
+            });
+        }
+        // Get data with filters
+        const resp = yield categoriesRef
+            .orderBy('id')
+            .limit(limit)
+            .startAt(data.docs[from - 1])
+            .where('status', '==', true).get();
+        // Send data
+        return res.status(200).json({
+            ok: true,
+            total: resp.docs.length,
+            documents: (0, returnDocsFirebase_1.returnDocsFirebase)(resp)
         });
     }
     catch (err) {
@@ -49,14 +72,24 @@ const getAllCategories = (req, res) => {
             msg: 'Error: Get all categories'
         });
     }
-};
+});
 exports.getAllCategories = getAllCategories;
-const getCategoryById = (req, res) => {
+const getCategoryById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
-        res.status(200).json({
-            msg: 'Get a category by Id',
-            id
+        // Get all categories with status true and id equal
+        const resp = yield categoriesRef.where('status', '==', true)
+            .where('id', '==', id).get();
+        // Verification if there are documents
+        if (resp.docs.length == 0) {
+            return res.status(404).json({
+                msg: 'Category with that ID not found in the database.'
+            });
+        }
+        // Send data
+        return res.status(200).json({
+            ok: true,
+            documents: (0, returnDocsFirebase_1.returnDocsFirebase)(resp)
         });
     }
     catch (err) {
@@ -65,6 +98,6 @@ const getCategoryById = (req, res) => {
             msg: 'Error: Get a category by Id'
         });
     }
-};
+});
 exports.getCategoryById = getCategoryById;
 //# sourceMappingURL=categories.js.map

@@ -18,7 +18,7 @@ router.get('/', getAllCategories);
 
 // Get a Category
 router.get('/:id', [
-
+    check('id','The id field is required.').not().isEmpty(),
 ], getCategoryById);
 
 export default router;

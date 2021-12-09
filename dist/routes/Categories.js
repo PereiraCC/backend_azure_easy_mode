@@ -15,6 +15,8 @@ router.post('/', [
 // Get all Categories
 router.get('/', categories_1.getAllCategories);
 // Get a Category
-router.get('/:id', [], categories_1.getCategoryById);
+router.get('/:id', [
+    (0, express_validator_1.check)('id', 'The id field is required.').not().isEmpty(),
+], categories_1.getCategoryById);
 exports.default = router;
 //# sourceMappingURL=categories.js.map
