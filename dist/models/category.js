@@ -2,14 +2,16 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Category {
     // Initial Category data
-    constructor(id, name) {
+    constructor(id, name, status = true) {
         this.id = id;
         this.name = name;
+        this.status = status;
     }
     fromJson() {
         return {
             "id": this.id,
-            "name": this.name
+            "name": this.name,
+            "status": this.status
         };
     }
 }
