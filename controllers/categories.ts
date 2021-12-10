@@ -19,7 +19,7 @@ export const postCategories = async (req : Request, res: Response) => {
 
         const doc = await categoriesRef.add( data );
         
-        res.status(200).json({
+        res.status(201).json({
             ok: true,
             uid: doc.id,
             data

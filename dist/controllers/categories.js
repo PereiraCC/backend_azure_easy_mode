@@ -24,7 +24,7 @@ const postCategories = (req, res) => __awaiter(void 0, void 0, void 0, function*
         const category = new category_1.default(id, name);
         const data = category.fromJson();
         const doc = yield categoriesRef.add(data);
-        res.status(200).json({
+        res.status(201).json({
             ok: true,
             uid: doc.id,
             data
