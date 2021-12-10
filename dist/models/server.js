@@ -6,10 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const categories_1 = __importDefault(require("../routes/categories"));
+const modules_1 = __importDefault(require("../routes/modules"));
 class Server {
     constructor() {
         this.apiPaths = {
-            categories: '/api/categories'
+            categories: '/api/categories',
+            modules: '/api/modules',
         };
         this.app = (0, express_1.default)();
         this.port = process.env.PORT || '8083';
@@ -28,6 +30,7 @@ class Server {
     }
     routes() {
         this.app.use(this.apiPaths.categories, categories_1.default);
+        this.app.use(this.apiPaths.modules, modules_1.default);
     }
     listen() {
         this.app.listen(this.port, () => {

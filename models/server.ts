@@ -2,13 +2,15 @@ import express, { Application } from 'express';
 import cors from 'cors';
 
 import categoriesRoute from '../routes/categories';
+import modulesRoute    from '../routes/modules';
 
 class Server {
 
     private app : Application;
     private port : string;
     private apiPaths = {
-        categories: '/api/categories'
+        categories : '/api/categories',
+        modules    : '/api/modules',
     };
 
     constructor() {
@@ -36,6 +38,7 @@ class Server {
 
     routes() {
         this.app.use( this.apiPaths.categories, categoriesRoute );
+        this.app.use( this.apiPaths.modules, modulesRoute );
     }
 
     listen() {
