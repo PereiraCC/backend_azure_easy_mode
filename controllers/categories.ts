@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 
-import db from '../db/config';
+import { firestore } from '../db/config';
 import { returnDocsFirebase } from '../helpers/returnDocsFirebase';
 import Category  from '../models/category';
 
 // Reference to collection of users in firebase
-const categoriesRef = db.collection('categories');
+const categoriesRef = firestore.collection('categories');
 
 export const postCategories = async (req : Request, res: Response) => {
 

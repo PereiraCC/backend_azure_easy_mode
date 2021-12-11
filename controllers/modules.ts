@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 
-import db from '../db/config';
+import { firestore } from '../db/config';
 import { returnDocsFirebase } from '../helpers/returnDocsFirebase';
 
 import Module from '../models/module';
 
 // Reference to collection of users in firebase
-const modulesRef = db.collection('modules');
+const modulesRef = firestore.collection('modules');
 
 export const postModule = async (req : Request, res: Response) => {
 

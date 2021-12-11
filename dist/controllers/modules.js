@@ -13,11 +13,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getModuleById = exports.getAllModules = exports.postModule = void 0;
-const config_1 = __importDefault(require("../db/config"));
+const config_1 = require("../db/config");
 const returnDocsFirebase_1 = require("../helpers/returnDocsFirebase");
 const module_1 = __importDefault(require("../models/module"));
 // Reference to collection of users in firebase
-const modulesRef = config_1.default.collection('modules');
+const modulesRef = config_1.firestore.collection('modules');
 const postModule = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id, id_category, name } = req.body;
     try {
