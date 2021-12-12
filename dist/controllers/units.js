@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadDocument = exports.postUnit = void 0;
-const config_1 = require("../db/config");
-const uploadFile_1 = require("../helpers/uploadFile");
+exports.getAnUnit = exports.getAllUnits = exports.uploadDocument = exports.postUnit = void 0;
 const unit_1 = __importDefault(require("../models/unit"));
+const config_1 = require("../db/config");
 const modules_1 = require("./modules");
+const uploadFile_1 = require("../helpers/uploadFile");
+const returnDocsFirebase_1 = require("../helpers/returnDocsFirebase");
 // Reference to collection of users in firebase
 const unitsRef = config_1.firestore.collection('units');
 const postUnit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -65,6 +66,72 @@ const uploadDocument = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.uploadDocument = uploadDocument;
+const getAllUnits = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id_module } = req.params;
+    const { limit = 10, from = 1 } = req.query;
+    try {
+        // Get all data to the limit
+        const data = yield unitsRef
+            .where('id_module', '==', id_module)
+            .orderBy("id")
+            .limit(limit).get();
+        // Verification if docs
+        if (from > data.docs.length || data.docs.length == 0) {
+            return res.status(200).json({
+                ok: true,
+                total: 0,
+                documents: []
+            });
+        }
+        // Get data with filters
+        const resp = yield unitsRef
+            .orderBy('id')
+            .limit(limit)
+            .startAt(data.docs[from - 1])
+            .where('id_module', '==', id_module)
+            .where('status', '==', true).get();
+        // Send data
+        return res.status(200).json({
+            ok: true,
+            total: resp.docs.length,
+            documents: (0, returnDocsFirebase_1.returnDocsFirebase)(resp)
+        });
+    }
+    catch (err) {
+        console.log(`Error ${err}`);
+        return res.status(500).json({
+            msg: 'Error: get all units'
+        });
+    }
+});
+exports.getAllUnits = getAllUnits;
+const getAnUnit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { id, id_module } = req.params;
+    try {
+        // Get all categories with status true and id equal
+        const resp = yield unitsRef.where('status', '==', true)
+            .where('id', '==', id)
+            .where('id_module', '==', id_module).get();
+        // Verification if there are documents
+        if (resp.empty) {
+            return res.status(404).json({
+                msg: 'Unit with that ID not found in the database.'
+            });
+        }
+        // Send data
+        return res.status(200).json({
+            ok: true,
+            documents: (0, returnDocsFirebase_1.returnDocsFirebase)(resp)
+        });
+    }
+    catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            msg: 'Error: get an unit'
+        });
+    }
+});
+exports.getAnUnit = getAnUnit;
 const getUnit = (id, id_module) => __awaiter(void 0, void 0, void 0, function* () {
     // Obtain all agents with status true / false (param) and id equal
     const resp = yield unitsRef.where('status', '==', true)
