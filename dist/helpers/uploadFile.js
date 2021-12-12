@@ -16,12 +16,12 @@ exports.uploadFile = void 0;
 const fs_1 = __importDefault(require("fs"));
 const config_1 = require("../db/config");
 global.XMLHttpRequest = require("xhr2");
-const uploadFile = (tempPath, name) => __awaiter(void 0, void 0, void 0, function* () {
+const uploadFile = (tempPath, name, moduleName) => __awaiter(void 0, void 0, void 0, function* () {
     const da = fs_1.default.readFileSync(tempPath);
     const metadata = {
         contentType: 'text/plain',
     };
-    const categoryRef = config_1.storageRef.child(`category/${name}`);
+    const categoryRef = config_1.storageRef.child(`${moduleName}/${name}`);
     try {
         yield categoryRef.put(da, metadata);
         return yield categoryRef.getDownloadURL();

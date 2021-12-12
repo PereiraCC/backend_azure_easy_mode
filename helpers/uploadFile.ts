@@ -3,14 +3,14 @@ import { storageRef } from '../db/config';
 global.XMLHttpRequest = require("xhr2");
 
 
-export const uploadFile = async (tempPath : string, name : string) => {
+export const uploadFile = async (tempPath : string, name : string, moduleName : string) => {
 
     const da = fs.readFileSync(tempPath);
     const metadata = {
         contentType: 'text/plain',
     };
 
-    const categoryRef = storageRef.child(`category/${name}`);
+    const categoryRef = storageRef.child(`${moduleName}/${name}`);
 
     try {
 

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getModuleById = exports.getAllModules = exports.postModule = void 0;
+exports.getModule = exports.getModuleById = exports.getAllModules = exports.postModule = void 0;
 const config_1 = require("../db/config");
 const returnDocsFirebase_1 = require("../helpers/returnDocsFirebase");
 const module_1 = __importDefault(require("../models/module"));
@@ -104,4 +104,17 @@ const getModuleById = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.getModuleById = getModuleById;
+const getModule = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    // Obtain all agents with status true / false (param) and id equal
+    const resp = yield modulesRef.where('status', '==', true)
+        .where('id', '==', id).get();
+    // From the list obtain documento with id equal
+    const docRef = resp.docs.find((doc) => {
+        if (doc.data().id === id) {
+            return doc;
+        }
+    });
+    return docRef;
+});
+exports.getModule = getModule;
 //# sourceMappingURL=modules.js.map

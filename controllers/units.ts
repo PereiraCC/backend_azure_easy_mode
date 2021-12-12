@@ -5,6 +5,7 @@
     import { returnDocsFirebase } from '../helpers/returnDocsFirebase';
     import { uploadFile } from '../helpers/uploadFile';
     import Unit from '../models/unit';
+import { getModule } from './modules';
 
     // Reference to collection of users in firebase
     const unitsRef = firestore.collection('units');
@@ -43,7 +44,9 @@
 
             const { tempFilePath, name} = req.files?.file as UploadedFile;
 
-            const urlFile : string = await uploadFile( tempFilePath, name );
+            const moduleRef = await getModule(id_module);
+
+            const urlFile : string = await uploadFile( tempFilePath, name, moduleRef?.data().name );
 
             let docRef = await getUnit(id, id_module);
 
@@ -68,7 +71,7 @@
 
     }
 
-    export const getUnit = async (id : string, id_module : string) => {
+    const getUnit = async (id : string, id_module : string) => {
 
         // Obtain all agents with status true / false (param) and id equal
         const resp = await unitsRef.where('status', '==', true)

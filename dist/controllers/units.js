@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUnit = exports.uploadDocument = exports.postUnit = void 0;
+exports.uploadDocument = exports.postUnit = void 0;
 const config_1 = require("../db/config");
 const uploadFile_1 = require("../helpers/uploadFile");
 const unit_1 = __importDefault(require("../models/unit"));
+const modules_1 = require("./modules");
 // Reference to collection of users in firebase
 const unitsRef = config_1.firestore.collection('units');
 const postUnit = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -43,12 +44,13 @@ const uploadDocument = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const { id_module, id } = req.params;
     try {
         const { tempFilePath, name } = (_a = req.files) === null || _a === void 0 ? void 0 : _a.file;
-        const urlFile = yield (0, uploadFile_1.uploadFile)(tempFilePath, name);
-        let docRef = yield (0, exports.getUnit)(id, id_module);
+        const moduleRef = yield (0, modules_1.getModule)(id_module);
+        const urlFile = yield (0, uploadFile_1.uploadFile)(tempFilePath, name, moduleRef === null || moduleRef === void 0 ? void 0 : moduleRef.data().name);
+        let docRef = yield getUnit(id, id_module);
         yield unitsRef.doc(docRef === null || docRef === void 0 ? void 0 : docRef.id).update({
             document: urlFile
         });
-        docRef = yield (0, exports.getUnit)(id, id_module);
+        docRef = yield getUnit(id, id_module);
         res.status(200).json({
             ok: true,
             uid: docRef === null || docRef === void 0 ? void 0 : docRef.id,
@@ -76,5 +78,4 @@ const getUnit = (id, id_module) => __awaiter(void 0, void 0, void 0, function* (
     });
     return docRef;
 });
-exports.getUnit = getUnit;
 //# sourceMappingURL=units.js.map

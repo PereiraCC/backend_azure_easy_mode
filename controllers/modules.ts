@@ -114,3 +114,20 @@ export const getModuleById = async (req : Request, res: Response) => {
     }
 
 }
+
+export const getModule = async (id : string) => {
+
+    // Obtain all agents with status true / false (param) and id equal
+    const resp = await modulesRef.where('status', '==', true)
+                                 .where('id','==', id).get();
+
+    // From the list obtain documento with id equal
+    const docRef = resp.docs.find((doc) => {
+        if(doc.data().id === id){
+            return doc;
+        }
+    });
+
+    return docRef;
+
+}
